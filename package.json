@@ -1,0 +1,14 @@
+{
+  "name": "madeincluj-3d-buildings",
+  "version": "0.1.0",
+  "description": "Buildings in 3D format",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/madeincluj/3d-buidings.git"
+  },
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-compress": "~0.5.2"
+  }
+}
