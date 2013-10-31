@@ -28,6 +28,8 @@ THREE.OBJLoader.prototype = {
 
 	parse: function ( text ) {
 
+		var allGeo = new THREE.Geometry();
+
 		// fixes
 
 		text = text.replace( /\ \\\r\n/g, '' ); // rhino adds ' \\r\n' some times.
