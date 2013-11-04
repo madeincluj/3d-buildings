@@ -5,6 +5,7 @@
 		<script type="text/javascript" src='js/lib/three.js'></script>
 		<script type="text/javascript" src='js/lib/three.obj-loader.js'></script>
 		<script type="text/javascript" src='js/lib/three.first-person-controls.js'></script>
+    <script type="text/javascript" src="js/lib/underscore-min.js"></script>
 	</head>
 	<body>
 		<script type='text/javascript'>
@@ -13,7 +14,7 @@
 
 			var camera, scene, renderer;
 
-			var mouseX = 0, mouseY = 0;
+			var mouseX = 0, mouseY = 0, mouseBtn = -1;
 
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
@@ -90,9 +91,13 @@
 				container.appendChild( renderer.domElement );
 
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+        document.addEventListener('mousedown', onDocumentMouseDown, true );
+        document.addEventListener('mouseup', onDocumentMouseUp, true );
+        document.addEventListener('contextmenu', function() {}, true);
 
 				//
 
+        camera.oldLookAt = new THREE.Vector3(scene.position.x, scene.position.y, scene.position.z);
 				window.addEventListener( 'resize', onWindowResize, false );
 
 			}
@@ -116,6 +121,13 @@
 
 			}
 
+      function onDocumentMouseDown( event ) {
+        mouseBtn = event.button;
+      }
+
+      function onDocumentMouseUp (event) {
+        mouseBtn = -1;
+      }
 			//
 
 			function animate() {
@@ -127,10 +139,17 @@
 
 			function render() {
 
-				camera.position.x += ( mouseX - camera.position.x ) * .05;
-				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+//        camera.position.x += ( mouseX - camera.position.x ) * .05;
+ //       camera.position.y += ( - mouseY - camera.position.y ) * .05;
 
-				camera.lookAt( scene.position );
+        //camera.oldLookAt = [camera.oldLookAt[0] +( mouseX - camera.oldLookAt[0]) *.005, camera.oldLookAt[1] - (mouseY - camera.oldLookAt[1]) * .005, camera.oldLookAt[2] ];
+        camera.oldLookAt.set(camera.oldLookAt.x + ( mouseX - camera.oldLookAt.x) *.001, camera.oldLookAt.y - (mouseY + camera.oldLookAt.y) * .001, camera.oldLookAt.z)
+        if (mouseBtn === 0) {
+          camera.position.sub(camera.position.clone().sub( camera.oldLookAt).multiplyScalar(.01));
+        } else if (mouseBtn === 2) {
+          camera.position.add(camera.position.clone().sub( camera.oldLookAt).multiplyScalar(.01));
+        }
+        camera.lookAt( camera.oldLookAt );
 
 				renderer.render( scene, camera );
 
