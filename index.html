@@ -33,6 +33,7 @@
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
 				camera.position.z = 10;
+        camera.position.y = 2;
 
 				// scene
 
@@ -124,8 +125,9 @@
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
         document.addEventListener('mousedown', onDocumentMouseDown, true );
         document.addEventListener('mouseup', onDocumentMouseUp, true );
-        document.addEventListener('contextmenu', function() {}, true);
-
+        document.oncontextmenu = function() {
+          return false;
+        };
 				//
 
         camera.oldLookAt = new THREE.Vector3(scene.position.x, scene.position.y, scene.position.z);
@@ -154,6 +156,12 @@
 
       function onDocumentMouseDown( event ) {
         mouseBtn = event.button;
+        if (event.button == 2) {
+          event.cancelBubble = true;
+          event.preventDefault();
+          event.stopPropagation();
+          return false;
+        }
       }
 
       function onDocumentMouseUp (event) {
