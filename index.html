@@ -45,7 +45,8 @@
         controls.lookSpeed = 0.00005;
         controls.lookVertical = true; 
         controls.constrainVertical = true;
-        controls.verticalMin = 1;
+        controls.verticalMax = 1;
+        controls.verticalMin = 20;
 
 				// scene
 
@@ -68,6 +69,7 @@
 				var texture = new THREE.Texture();
 
 				var objects = [];
+        /*
 				objects.push('A1');
 				objects.push('A2');
 				objects.push('A3');
@@ -98,6 +100,7 @@
 				objects.push('F4');
 				objects.push('F5');
 
+        /*
 				var f1_matrix = new THREE.Matrix4();
 				f1_matrix.makeTranslation(0.97, 1.21, 4.85);
 				// f1_matrix.makeRotationY(Math.PI);
@@ -146,7 +149,8 @@
 					'F5': f5_matrix
 				};
 
-
+*/
+        objects.push('test');
 				var geo = new THREE.Geometry();
 				var material = new THREE.MeshLambertMaterial();
 				var mesh = new THREE.Mesh( geo, material );
@@ -157,7 +161,7 @@
 					var loader = new THREE.OBJLoader( manager );
 					loader.load( 'obj/' + name + '.obj', function ( object ) {
 
-					if (transforms[name]) object.applyMatrix(transforms[name]);
+//					if (transforms[name]) object.applyMatrix(transforms[name]);
 					object.updateMatrix();
 					object.updateMatrixWorld();
 
