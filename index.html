@@ -5,7 +5,13 @@
 		<script type="text/javascript" src='js/lib/three.js'></script>
 		<script type="text/javascript" src='js/lib/three.obj-loader.js'></script>
 		<script type="text/javascript" src='js/lib/three.first-person-controls.js'></script>
-    <script type="text/javascript" src="js/lib/underscore-min.js"></script>
+	    <script type="text/javascript" src="js/lib/underscore-min.js"></script>
+		<style type="text/css">
+			body {
+				margin:0;
+				padding: 0;
+			}
+		</style>
 	</head>
 	<body>
 		<script type='text/javascript'>
@@ -61,19 +67,70 @@
 
 				var texture = new THREE.Texture();
 
-				// model
+//<<<<<<< HEAD
+				//// model
 
-				var objects = [
-					/*'A1',*/ 'A2', 'A3', 'A4', 'A5', 
-					/*'B1',*/ 'B2', 'B3', 'B4', 'B5', 
-					/*'C1',*/ 'C2', 'C3', 'C4', 'C5',
-					/*'D1', */'D2', 'D3', 'D4', 'D5', 
-					'E1', 'E2', 'E3', 'E4', /*'E5',*/ 
-					'F1', 'F2', 'F3', 'F4', /*'F5'*/
-				];
+				//var objects = [
+					//[>'A1',<] 'A2', 'A3', 'A4', 'A5', 
+					//[>'B1',<] 'B2', 'B3', 'B4', 'B5', 
+					//[>'C1',<] 'C2', 'C3', 'C4', 'C5',
+					//[>'D1', <]'D2', 'D3', 'D4', 'D5', 
+					//'E1', 'E2', 'E3', 'E4', [>'E5',<] 
+					//'F1', 'F2', 'F3', 'F4', [>'F5'<]
+				//];
+//=======
+				var objects = [];
+				objects.push('A1');
+				objects.push('A2');
+				objects.push('A3');
+				objects.push('A4');
+				objects.push('A5');
+				objects.push('B1');
+				objects.push('B2');
+				objects.push('B3');
+				objects.push('B4');
+				objects.push('B5');
+				objects.push('C1');
+				objects.push('C2');
+				objects.push('C3');
+				objects.push('C4');
+				objects.push('C5');
+				// objects.push('D1');
+				// objects.push('D2');
+				// objects.push('D3');
+				// objects.push('D4');
+				// objects.push('D5');
+				objects.push('E1');
+				objects.push('E2');
+				objects.push('E3');
+				objects.push('E4');
+				objects.push('F1');
+				objects.push('F2');
+				objects.push('F3');
+				objects.push('F4');
+				objects.push('F5');
 
-				var f_matrix = new THREE.Matrix4();
-				f_matrix.makeTranslation(0.97, 1.21, 4.85);
+				var f1_matrix = new THREE.Matrix4();
+				f1_matrix.makeTranslation(0.97, 1.21, 4.85);
+				// f1_matrix.makeRotationY(Math.PI);
+
+				var f2_matrix = new THREE.Matrix4();
+				f2_matrix.makeTranslation(0.97, 1.21, 4.85);
+				// f2_matrix.makeRotationY(Math.PI);
+				
+				var f3_matrix = new THREE.Matrix4();
+				f3_matrix.makeTranslation(0.97, 1.21, 4.85);
+				// f3_matrix.makeRotationY(Math.PI);
+
+				var f4_matrix = new THREE.Matrix4();
+				f4_matrix.makeTranslation(0.97, 1.21, 4.85);
+				// f4_matrix.makeRotationY(Math.PI);
+
+				var f5_matrix = new THREE.Matrix4();
+				f5_matrix.makeTranslation(0.97, 1.21, 4.85);
+				// f5_matrix.makeRotationY(Math.PI);
+//>>>>>>> bdba6111c214546c2d72997bdff888dfc33e92fc
+
 
 				var a_matrix = new THREE.Matrix4();
 				a_matrix.makeScale(10, 10, 10);
@@ -94,15 +151,11 @@
 					'C3': a_matrix,
 					'C4': a_matrix,
 					'C5': a_matrix,
-          'D2': d_matrix,
-          'D3': d_matrix,
-          'D4': d_matrix,
-          'D5': d_matrix,
-					'F1': f_matrix,
-					'F2': f_matrix,
-					'F3': f_matrix,
-					'F4': f_matrix,
-					'F5': f_matrix
+					'F1': f1_matrix,
+					'F2': f2_matrix,
+					'F3': f3_matrix,
+					'F4': f4_matrix,
+					'F5': f5_matrix
 				};
 
 
@@ -136,10 +189,8 @@
 				});
 
 
-
-				//
-
-				renderer = new THREE.WebGLRenderer();
+				renderer = new THREE.WebGLRenderer( { antialias: false, alpha: false } );
+				renderer.setClearColor( 0xd8e7ff );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 
