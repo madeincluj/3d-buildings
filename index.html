@@ -42,11 +42,8 @@
 				camera.position.y = 10;
         controls =  new THREE.FirstPersonControls(camera, scene);
         controls.movementSpeed = .002;
-        controls.lookSpeed = 0.00005;
+        controls.lookSpeed = 0.00007;
         controls.lookVertical = true; 
-        controls.constrainVertical = true;
-        controls.verticalMax = 1;
-        controls.verticalMin = 20;
 
 				// scene
 
@@ -215,25 +212,6 @@
 			}
 
 			function render() {
-
-//        camera.position.x += ( mouseX - camera.position.x ) * .05;
- //       camera.position.y += ( - mouseY - camera.position.y ) * .05;
-
-        //camera.oldLookAt = [camera.oldLookAt[0] +( mouseX - camera.oldLookAt[0]) *.005, camera.oldLookAt[1] - (mouseY - camera.oldLookAt[1]) * .005, camera.oldLookAt[2] ];
-       /*
-        if (mouseBtn === 0) {
-          camera.oldLookAt.set(camera.oldLookAt.x + ( mouseX - camera.oldLookAt.x) *.001, camera.oldLookAt.y - (mouseY + camera.oldLookAt.y) * .001, camera.oldLookAt.z)
-        camera.lookAt( camera.oldLookAt );
-        }else if (mouseBtn === 1) {
-          camera.position.sub(camera.position.clone().sub( camera.oldLookAt).multiplyScalar(.01));
-        camera.lookAt( camera.oldLookAt );
-        }  
-         else if (mouseBtn === 2) {
-          camera.position.add(camera.position.clone().sub( camera.oldLookAt).multiplyScalar(.01));
-        camera.lookAt( camera.oldLookAt );
-        }
-       */
-
       
         var time = performance.now();
         controls.update(time - lastTime);
