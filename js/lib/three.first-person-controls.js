@@ -16,7 +16,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 	this.lookVertical = true;
 	this.autoForward = false;
-	// this.invertVertical = false;
+	this.invertVertical = false;
 
 	this.activeLook = true;
 
@@ -186,6 +186,15 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 	};
 
+  this.detectCollision = function() {
+        var cameraDirection = this.getDirection().clone();
+        var ray = new THREE.Raycaster(this.object.position, cameraDirection, 0.03, .50);
+        var intersects = ray.intersectObjects(collidable, false);
+        if (intersects.length) {
+          return true;
+        } else return false;
+      };
+
 	this.update = function( delta ) {
 
 		if ( this.freeze ) {
@@ -209,17 +218,18 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 		var actualMoveSpeed = delta * this.movementSpeed;
 
-		if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
-		if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+    if (!this.detectCollision()) {
+      if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
+      if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
 
-		if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
-		if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
+      if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
+      if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
 
-		if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
-		if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
+      if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
+      if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
 
-		var actualLookSpeed = delta * this.lookSpeed;
-
+    }
+    var actualLookSpeed = delta * this.lookSpeed;
 		if ( !this.activeLook ) {
 
 			actualLookSpeed = 0;
@@ -259,6 +269,9 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 	};
 
+  this.getDirection = function() {
+    return this.target;
+  };
 
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 

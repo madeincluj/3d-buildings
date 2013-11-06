@@ -63,8 +63,8 @@
 				camera.position.z = 10;
 				camera.position.y = 10;
         controls =  new THREE.FirstPersonControls(camera, scene);
-        controls.movementSpeed = .002;
-        controls.lookSpeed = 0.00007;
+        controls.movementSpeed = .005;
+        controls.lookSpeed = 0.0003;
         controls.lookVertical = true; 
 
 				// scene
@@ -75,7 +75,7 @@
 				scene.add( ambient );
 
 				var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-				directionalLight.position.set( 1, 1, 1 );
+				directionalLight.position.set( 21, 21, 1 );
 				scene.add( directionalLight );
 
 				// scene.fog = new THREE.FogExp2(0x000000, .1);
@@ -169,9 +169,14 @@
 
 */
         objects.push('cluj');
+        collidable = [];
+				var f3_matrix = new THREE.Matrix4();
+				f3_matrix.makeScale(10, 10, 10);
+        var transforms = {'cluj': f3_matrix};
 				var geo = new THREE.Geometry();
 				var material = new THREE.MeshLambertMaterial();
-				var mesh = new THREE.Mesh( geo, material );
+				mesh = new THREE.Mesh( geo, material );
+        collidable.push(mesh);
 
 				objects.forEach(function(name) {
 
@@ -179,7 +184,7 @@
 					var loader = new THREE.OBJLoader( manager );
 					loader.load( 'obj/' + name + '.obj', function ( object ) {
 
-//					if (transforms[name]) object.applyMatrix(transforms[name]);
+					if (transforms[name]) object.applyMatrix(transforms[name]);
 					object.updateMatrix();
 					object.updateMatrixWorld();
 
@@ -191,6 +196,7 @@
 
 					    if (child instanceof THREE.Mesh) {
 					    	THREE.GeometryUtils.merge(geo, child);
+                collidable.push(child);
 					    }
 					});
 
@@ -204,19 +210,28 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
 				// TODO: where to remove loading ?
-				removeLoading();
 				document.body.appendChild( container );
 				container.appendChild( renderer.domElement );
 
 				//
 
-        camera.oldLookAt = new THREE.Vector3(scene.position.x, scene.position.y, scene.position.z);
 				window.addEventListener( 'resize', onWindowResize, false );
 
         lastTime = performance.now();
         camera.lookAt(scene.position);
         animate();
+				removeLoading();
 			}
+
+      function detectCollision() {
+        var cameraDirection = controls.getDirection(new THREE.Vector3(0,0,0)).clone();
+        var ray = new THREE.Raycaster(controls.object.position, cameraDirection, 0.03, 0.15);
+        var intersects = ray.intersectObjects(collidable, true);
+        if (intersects.length && intersects[0].distance < 0.04) {
+          console.log('we hit something');
+          return true;
+        } else return false;
+      }
 
 			function onWindowResize() {
 
