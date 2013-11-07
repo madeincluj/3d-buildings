@@ -64,6 +64,7 @@
         controls =  new THREE.FirstPersonControls(camera, scene);
         controls.movementSpeed = .002;
         controls.lookSpeed = 0.00007;
+        controls._lookSpeed = 0.00007;
         controls.lookVertical = true; 
 
 				// scene
@@ -77,47 +78,15 @@
 				directionalLight.position.set( 1, 1, 1 );
 				scene.add( directionalLight );
 
-				// scene.fog = new THREE.FogExp2(0x000000, .1);
-				// texture
-
 				var manager = new THREE.LoadingManager(function() {
-					scene.add( mesh );
+					scene.add(mesh);
           removeLoading();
+          controls.freeze = false;
 				});
 
 				var texture = new THREE.Texture();
 
 				var objects = [];
-        /*
-				objects.push('A1');
-				objects.push('A2');
-				objects.push('A3');
-				objects.push('A4');
-				objects.push('A5');
-				objects.push('B1');
-				objects.push('B2');
-				objects.push('B3');
-				objects.push('B4');
-				objects.push('B5');
-				objects.push('C1');
-				objects.push('C2');
-				objects.push('C3');
-				objects.push('C4');
-				objects.push('C5');
-				// objects.push('D1');
-				// objects.push('D2');
-				// objects.push('D3');
-				// objects.push('D4');
-				// objects.push('D5');
-				objects.push('E1');
-				objects.push('E2');
-				objects.push('E3');
-				objects.push('E4');
-				objects.push('F1');
-				objects.push('F2');
-				objects.push('F3');
-				objects.push('F4');
-				objects.push('F5');
 
         /*
 				var f1_matrix = new THREE.Matrix4();
@@ -177,33 +146,18 @@
         THREE.GeometryUtils.merge(geo, earth);
 				var material = new THREE.MeshLambertMaterial();
 
-        var i =0;
 				objects.forEach(function(name) {
 
 
 					var loader = new THREE.OBJLoader( manager );
 					loader.load( 'obj/' + name + '.obj', function ( object ) {
 
-//					if (transforms[name]) object.applyMatrix(transforms[name]);
-//					object.updateMatrix();
-//					object.updateMatrixWorld();
-
-
             object.traverse(function(child){
-              /*
-                if(child.parent){
-                    child.updateMatrixWorld();
-                    child.applyMatrix(child.parent.matrixWorld);    
-                }
-               */
-
                 if (child instanceof THREE.Mesh) {
-                  i++;
                   THREE.GeometryUtils.merge(geo, child);
                 }
             });
 
-            console.log('objects', i);
           });
 				});
 
@@ -221,7 +175,8 @@
 
         lastTime = performance.now();
         camera.lookAt(scene.position);
-      animate();
+        controls.freeze = true;
+        animate();
 			}
 
       function render() {
@@ -233,9 +188,8 @@
       }
       
 			function animate() {
-        render();
         requestAnimationFrame( animate );
-
+        render();
 			}
 
      function onWindowResize() {

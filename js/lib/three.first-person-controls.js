@@ -49,6 +49,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 	this.viewHalfX = 0;
 	this.viewHalfY = 0;
+  this.deadZoneRadius = 40;
 
 	if ( this.domElement !== document ) {
 
@@ -133,6 +134,11 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 			this.mouseY = event.pageY - this.domElement.offsetTop - this.viewHalfY;
 
 		}
+
+    if (this.mouseX >= -this.deadZoneRadius && this.mouseX <= this.deadZoneRadius && this.mouseY >= -this.deadZoneRadius && this.mouseY <= this.deadZoneRadius) {
+      if (this.lookSpeed) this._lookSpeed = this.lookSpeed;
+      this.lookSpeed = 0;
+    } else this.lookSpeed = this._lookSpeed;
 
 	};
 
