@@ -51,7 +51,6 @@
 
 
 			init();
-			animate();
 
 
 			function init() {
@@ -83,6 +82,7 @@
 
 				var manager = new THREE.LoadingManager(function() {
 					scene.add( mesh );
+          removeLoading();
 				});
 
 				var texture = new THREE.Texture();
@@ -207,7 +207,7 @@
           });
 				});
 
-        var mesh = new THREE.Mesh( geo, material );
+        mesh = new THREE.Mesh( geo, material );
 
 				renderer = new THREE.WebGLRenderer( { antialias: false, alpha: false } );
 				renderer.setClearColor( 0xd8e7ff );
@@ -221,7 +221,7 @@
 
         lastTime = performance.now();
         camera.lookAt(scene.position);
-        removeLoading();
+      animate();
 			}
 
       function render() {
