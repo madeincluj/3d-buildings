@@ -7,7 +7,7 @@
 THREE.FirstPersonControls = function ( object, domElement ) {
 
 	this.object = object;
-	this.target = new THREE.Vector3( 0, 0, 0 );
+  this.target = new THREE.Vector3(0, 0, 0);
 
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
 
@@ -243,7 +243,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 		this.lon += this.mouseX * actualLookSpeed;
 		if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
 
-		this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
+		this.lat = THREE.Math.clamp(this.lat, -85, 85);
 		this.phi = THREE.Math.degToRad( 90 - this.lat );
 
 		this.theta = THREE.Math.degToRad( this.lon );
@@ -257,10 +257,9 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 		var targetPosition = this.target,
 			position = this.object.position;
 
-		targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
-		targetPosition.y = position.y + 100 * Math.cos( this.phi );
-		targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
-
+    targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
+    targetPosition.y = position.y + 100 * Math.cos( this.phi );
+    targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
 		this.object.lookAt( targetPosition );
 
 	};
@@ -269,6 +268,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
 	this.domElement.addEventListener( 'mousemove', bind( this, this.onMouseMove ), false );
+  this.domElement.addEventListener( 'mouseout', bind(this, function(e) {this.lookSpeed = 0;}));
 	this.domElement.addEventListener( 'mousedown', bind( this, this.onMouseDown ), false );
 	this.domElement.addEventListener( 'mouseup', bind( this, this.onMouseUp ), false );
 	this.domElement.addEventListener( 'keydown', bind( this, this.onKeyDown ), false );
@@ -282,7 +282,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 		};
 
-	};
+	}
 
 	this.handleResize();
 

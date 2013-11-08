@@ -29,6 +29,18 @@
 			#loading  img {
 				padding: 60px 0 30px;
 			}
+
+
+      #control-panel {
+        display: none;
+        position: fixed;
+        top: 20px;
+        z-index: 100;
+        left: 40px;
+        background: #fff;
+				font-family: 'brandon-grotesque','helvetica','arial',sans-serif;
+        text-align: center;
+      }
 		</style>
 	</head>
 	<body>
@@ -37,6 +49,10 @@
 			<img src="img/ilustratie.png" width='200'/>
 			<h2>Se încarcă oraşul 3D. Vă rugăm să aşteptați.</h2>
 		</div>
+
+    <div id="control-panel">
+    	<button id="back-home">Back to start</button>
+    </div>
 
 		<script type='text/javascript'>
 
@@ -52,25 +68,35 @@
 
 			init();
 
+      function addControls() {
+          lastTime = performance.now();
+          controls =  new THREE.FirstPersonControls(camera, container);
+          controls.mouseX = 0;
+          controls.mouseY = 0;
+          controls.movementSpeed = .002;
+          controls.lookSpeed = 0.00007;
+          controls._lookSpeed = controls.lookSpeed;
+          moveCameraToStart(true);
+      }
 
 			function init() {
 
 				container = document.createElement( 'div' );
 				container.style.backgroundColor = '#000000';
 
-				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.01, 45 );
-				camera.position.z = 10;
-				camera.position.y = 10;
-        controls =  new THREE.FirstPersonControls(camera, scene);
-        controls.movementSpeed = .002;
-        controls.lookSpeed = 0.00007;
-        controls._lookSpeed = 0.00007;
-        controls.lookVertical = true; 
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.01, 50 );
+        initCameraPosition = new THREE.Vector3(4.2, 5.8, 14);
+				camera.position.x = 1;
+				camera.position.y = 1;
+				camera.position.z = 2;
 
 				// scene
 
 				scene = new THREE.Scene();
 
+        fog = new THREE.FogExp2(0xd8e7ff, 0.07);
+
+        scene.fog = fog;
 				var ambient = new THREE.AmbientLight( 0x111111 );
 				scene.add( ambient );
 
@@ -79,65 +105,23 @@
 				scene.add( directionalLight );
 
 				var manager = new THREE.LoadingManager(function() {
-					scene.add(mesh);
           removeLoading();
-          controls.freeze = false;
+					scene.add(mesh);
+          lastTime = performance.now();
+          animate();
+          addControls();
 				});
 
 				var texture = new THREE.Texture();
 
 				var objects = [];
 
-        /*
-				var f1_matrix = new THREE.Matrix4();
-				f1_matrix.makeTranslation(0.97, 1.21, 4.85);
-				// f1_matrix.makeRotationY(Math.PI);
-
-				var f2_matrix = new THREE.Matrix4();
-				f2_matrix.makeTranslation(0.97, 1.21, 4.85);
-				// f2_matrix.makeRotationY(Math.PI);
-				
-				var f3_matrix = new THREE.Matrix4();
-				f3_matrix.makeTranslation(0.97, 1.21, 4.85);
-				// f3_matrix.makeRotationY(Math.PI);
-
-				var f4_matrix = new THREE.Matrix4();
-				f4_matrix.makeTranslation(0.97, 1.21, 4.85);
-				// f4_matrix.makeRotationY(Math.PI);
-
-				var f5_matrix = new THREE.Matrix4();
-				f5_matrix.makeTranslation(0.97, 1.21, 4.85);
-				// f5_matrix.makeRotationY(Math.PI);
-
-
-				var a_matrix = new THREE.Matrix4();
-				a_matrix.makeScale(10, 10, 10);
-
-        var d_matrix = new THREE.Matrix4();
-        d_matrix.makeTranslation(0, 1, -46);
-        d_matrix.makeScale(2.5, 2.5, 2.5);
-				var transforms = {
-					'A2': a_matrix,
-					'A3': a_matrix,
-					'A4': a_matrix,
-					'A5': a_matrix,
-					'B2': a_matrix,
-					'B3': a_matrix,
-					'B4': a_matrix,
-					'B5': a_matrix,
-					'C2': a_matrix,
-					'C3': a_matrix,
-					'C4': a_matrix,
-					'C5': a_matrix,
-					'F1': f1_matrix,
-					'F2': f2_matrix,
-					'F3': f3_matrix,
-					'F4': f4_matrix,
-					'F5': f5_matrix
-				};
-
-*/
         objects.push('cluj');
+        var translateMatrix = new THREE.Matrix4();
+        translateMatrix.makeTranslation(93, 0, 13);
+        //var transforms = {
+          //'cluj': translateMatrix
+        //};
 				var geo = new THREE.Geometry();
         var earth = new THREE.CubeGeometry(1000, 0.00001, 1000);
         var earth_matrix = new THREE.Matrix4();
@@ -145,6 +129,7 @@
         earth.applyMatrix(earth_matrix);
         THREE.GeometryUtils.merge(geo, earth);
 				var material = new THREE.MeshLambertMaterial();
+        //material.ambient(0x)
 
 				objects.forEach(function(name) {
 
@@ -152,7 +137,18 @@
 					var loader = new THREE.OBJLoader( manager );
 					loader.load( 'obj/' + name + '.obj', function ( object ) {
 
+          //if (transforms[name]) {
+            //object.applyMatrix(transforms[name]);
+          //}
+          object.updateMatrix();
+          object.updateMatrixWorld();
+
             object.traverse(function(child){
+              if (child.parent) {
+                child.updateMatrix();
+                child.applyMatrix(child.parent.matrixWorld);
+              }
+
                 if (child instanceof THREE.Mesh) {
                   THREE.GeometryUtils.merge(geo, child);
                 }
@@ -172,22 +168,63 @@
 				document.body.appendChild( container );
 				container.appendChild( renderer.domElement );
         window.addEventListener( 'resize', onWindowResize, false );
+        var backButton = document.getElementById('back-home');
+        backButton.addEventListener('click', moveCameraToStart);
 
-        lastTime = performance.now();
-        camera.lookAt(scene.position);
-        controls.freeze = true;
-        animate();
+        camera.lookAt(scene.position.clone());
+
 			}
+
+      function moveCameraToStart(firstRun) {
+        controls.freeze = true;
+        var diff = camera.position.clone().sub(initCameraPosition),
+            threshold = 0.5;
+        if (Math.abs(diff.x) >= threshold ||
+            Math.abs(diff.y) >= threshold ||
+            Math.abs(diff.z) >= threshold) {
+          requestAnimationFrame(moveCameraToStart);
+          if (Math.abs(diff.x) >= threshold) {
+            camera.translateX(-controls.movementSpeed * diff.x * 15);
+          }
+          if (Math.abs(diff.y) >= threshold) {
+            camera.translateY(-controls.movementSpeed * diff.y * 15);
+          }
+          if (Math.abs(diff.z) >= threshold) {
+            camera.translateZ(-controls.movementSpeed * diff.z * 15);
+          }
+          camera.updateMatrixWorld();
+          camera.updateMatrix();
+        } else {
+          if (firstRun) {
+              controls.mouseX = 0;
+              controls.mouseY = 0;
+              controls.lat = -25;
+              controls.lon = -106.6495033800851;
+              controls.target = scene.position.clone();
+              controls.freeze = false;
+            console.log(controls.lat);
+          } else {
+            console.log(controls.lat);
+              controls.mouseX = 0;
+              controls.mouseY = 0;
+              controls.lat = -34.6405691800904;
+              controls.lon = -106.6495033800851;
+              controls.target = scene.position.clone();
+              controls.freeze = false;
+            console.log(controls.lat);
+          }
+        }
+        camera.lookAt(scene.position);
+      }
 
       function render() {
         var time = performance.now();
-        controls.update(time - lastTime);
-        renderer.render( scene, camera );
+        if (typeof controls !='undefined') controls.update(time - lastTime);
         lastTime = time;
-
+        renderer.render( scene, camera );
       }
       
-			function animate() {
+			function animate(e) {
         requestAnimationFrame( animate );
         render();
 			}
@@ -205,7 +242,9 @@
 
 			function removeLoading() {
 				var loading = document.getElementById('loading');
-				document.body.removeChild(loading);
+				var controls = document.getElementById('control-panel');
+        document.body.removeChild(loading);
+        controls.style.display = 'block';
 			}
 
 		</script>
