@@ -36,10 +36,24 @@
         position: fixed;
         top: 20px;
         z-index: 100;
+        width: 200px;
+        height: 100px;
+        border-radius: 6px;
         left: 40px;
         background: #fff;
+        font-size: 10px;
 				font-family: 'brandon-grotesque','helvetica','arial',sans-serif;
         text-align: center;
+      }
+
+      button#back-home {
+        width: 120px;
+        background: #5dafdf;
+        border-radius: 2px;
+        padding: 8px;
+        color: #fff;
+        border: 2px solid #5dafdf;
+        margin-top: 20px;
       }
 		</style>
 	</head>
@@ -137,18 +151,7 @@
 					var loader = new THREE.OBJLoader( manager );
 					loader.load( 'obj/' + name + '.obj', function ( object ) {
 
-          //if (transforms[name]) {
-            //object.applyMatrix(transforms[name]);
-          //}
-          object.updateMatrix();
-          object.updateMatrixWorld();
-
             object.traverse(function(child){
-              if (child.parent) {
-                child.updateMatrix();
-                child.applyMatrix(child.parent.matrixWorld);
-              }
-
                 if (child instanceof THREE.Mesh) {
                   THREE.GeometryUtils.merge(geo, child);
                 }
