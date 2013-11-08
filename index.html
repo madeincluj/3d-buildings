@@ -149,7 +149,7 @@
 
 
 					var loader = new THREE.OBJLoader( manager );
-					loader.load( 'obj/' + name + '.obj', function ( object ) {
+					loader.load( 'http://madeincluj.s3.amazonaws.com/3d/' + name + '.obj', function ( object ) {
 
             object.traverse(function(child){
                 if (child instanceof THREE.Mesh) {
