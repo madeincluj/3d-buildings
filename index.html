@@ -120,7 +120,9 @@
 
 				var manager = new THREE.LoadingManager(function() {
           removeLoading();
-					scene.add(mesh);
+          
+					//scene.add(mesh);
+         meshes.forEach(function(m) {scene.add(m);});
           lastTime = performance.now();
           animate();
           addControls();
@@ -143,24 +145,27 @@
         earth.applyMatrix(earth_matrix);
         THREE.GeometryUtils.merge(geo, earth);
 				var material = new THREE.MeshLambertMaterial();
-        //material.ambient(0x)
+        var meshes = [], geometries = [];
 
 				objects.forEach(function(name) {
+          
 
 
 					var loader = new THREE.OBJLoader( manager );
 					loader.load( 'obj/' + name + '.obj', function ( object ) {
+            var geom = new THREE.Geometry();
 
             object.traverse(function(child){
                 if (child instanceof THREE.Mesh) {
-                  THREE.GeometryUtils.merge(geo, child);
+                  THREE.GeometryUtils.merge(geom, child);
                 }
             });
-
+            meshes.push(new THREE.Mesh(geom, material));
           });
 				});
 
         mesh = new THREE.Mesh( geo, material );
+        meshes.push(mesh);
 
 				renderer = new THREE.WebGLRenderer( { antialias: false, alpha: false } );
 				renderer.setClearColor( 0xd8e7ff );
